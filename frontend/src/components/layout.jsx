@@ -5,8 +5,8 @@ import Navbar from "./navbar";
 
 const Layout = () => {
   return (
-    <div>
-      <h1>Hello</h1>
+    <div className="lg:max-w-[900px] lg:px-16 mx-auto py-8 shadow-xl flex flex-col px-8">
+      <Navbar />
       <Outlet />
     </div>
   );

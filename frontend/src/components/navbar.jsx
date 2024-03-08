@@ -1,4 +1,4 @@
-import { BrowserRouter as Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import add from '../assets/add.svg';
 

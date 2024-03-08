@@ -2,8 +2,7 @@ import * as React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./components/home";
-// import Layout from "./components/layout";
-// import Home from './home';
+import CreatePostForm from "./components/category-post-form";
 
 function App() {
   return (
@@ -12,7 +11,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home/>}></Route>
-            <Route path="folder" element={<h2>FileCAll</h2>}></Route>
+            <Route path="create-post" element={<CreatePostForm/>}></Route>
             <Route path="*" element={<h2>Not found page</h2>}></Route>
           </Route>
         </Routes>
