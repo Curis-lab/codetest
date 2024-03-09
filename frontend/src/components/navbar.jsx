@@ -28,7 +28,7 @@ const Navbar = () => {
           create Page
         </Link>
         <Link className="btn" to="/sign-in">
-          Sign In
+          Login
         </Link>
       </div>
     </div>

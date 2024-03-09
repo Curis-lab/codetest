@@ -1,16 +1,28 @@
 //express5 contain async error handly
-import express from "express";
-import { getUser, getUserById, createUser, writePost } from "./database.js";
 import cors from "cors";
+import express from "express";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import bcrypt from "bcrypt";
 
+import {
+  getUser,
+  getUserById,
+  createUser,
+  writePost,
+  checkEmailForLogin,
+} from "./database.js";
+const salt = 10;
 const app = express();
-app.use(express.json());
 
-app.use(cors());
+app.use(express.json());
+app.use(
+  cors()
+);
+app.use(cookieParser());
 
 app.get("/user", async (req, res) => {
   const users = await getUser();
-
   res.send(users);
 });
 
@@ -20,16 +32,45 @@ app.get("/user/:id", async (req, res) => {
   res.send(getUser);
 });
 
-app.post("/create-user", async (req, res) => {
-  const { email, password, username } = req.body;
-  const newRegistration = await createUser(email, password, username);
-  res.status(201).send(newRegistration);
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const result = await checkEmailForLogin(email);
+
+  bcrypt.compare(result.password, password, (err, respond) => {
+    if (err) {
+      res.send("Error: Invalid Login Error");
+    } else if (respond) {
+      res.send(result);
+    } else {
+      res.send("Error: Password does not match");
+    }
+  });
 });
 
-app.post("/create-post",async(req, res)=>{
-  const {}= req.body;
-  //!we can not remmenber for long parameter
-  const createdPost = await writePost();
+app.post("/registration", (req, res) => {
+  const { email, password, username } = req.body;
+  bcrypt.hash(password.toString(), salt, async (err, hash) => {
+    if (err) {
+      res.status(500).send({ Error: "Error for hashing password" });
+    } else {
+      const newRegistration = await createUser(email, hash, username);
+      res.status(201).send(newRegistration);
+    }
+  });
+});
+
+app.post("/create-post", async (req, res) => {
+  const { user_id, title, imageURL, content, referencesURL, category_id } =
+    req.body;
+  //!we can not remmenber for long parameter so REFACTOR IT
+  const createdPost = await writePost(
+    user_id,
+    title,
+    imageURL,
+    content,
+    referencesURL,
+    category_id
+  );
   res.status(201).send(createdPost);
 });
 

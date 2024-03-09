@@ -18,7 +18,14 @@ export async function getUser() {
 }
 
 export async function getUserById(id) {
-  const [rows] = await pool.query(`SELECT * FROM User WHERE user_id = ?`, [id]);
+  const [rows] = await pool.query(`SELECT * FROM User WHERE id = ?`, [id]);
+  return rows;
+}
+
+export async function checkEmailForLogin(email) {
+  const [rows] = await pool.query(`SELECT * FROM User WHERE email = ?`, [
+    email,
+  ]);
   return rows;
 }
 
@@ -33,17 +40,21 @@ export async function createUser(email, password, username) {
 
 //Posting
 async function getPostByID(id) {
-  const [rows] = await pool.query(`SELECT * FROM Post WHERE post_id = ?`,[id]);
+  const [rows] = await pool.query(`SELECT * FROM Post WHERE post_id = ?`, [id]);
   return rows;
 }
 
-export async function writePost(user_id, title, imageURL, content, referencesURL, category_id) {
-  //there have something i don't know
- 
+export async function writePost(
+  user_id,
+  title,
+  imageURL,
+  content,
+  referencesURL,
+  category_id
+) {
   const result = await pool.query(
     `INSERT INTO Post (user_id, title, imageURL, content, referencesURL, category_id) VALUES(?,?,?,?,?,?)`,
     [user_id, title, imageURL, content, referencesURL, category_id]
   );
   return getPostByID(result.insertId);
 }
-
