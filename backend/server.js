@@ -1,25 +1,43 @@
-const express = require("express");
-const cors = require("cors");
-const mysql = require("mysql");
+//express5 contain async error handly
+import express from "express";
+import { getUser, getUserById, createUser, writePost } from "./database.js";
+import cors from "cors";
+
 const app = express();
+app.use(express.json());
 
 app.use(cors());
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "window10",
-  database: "Pando",
+app.get("/user", async (req, res) => {
+  const users = await getUser();
+
+  res.send(users);
 });
 
-app.get("/", (req, res) => {
-  const sql = "SELECT * FROM Booking";
-  db.query(sql, (err, data) => {
-    if (err) return res.json(err);
-    return res.json(data);
-  });
+app.get("/user/:id", async (req, res) => {
+  const id = req.params.id;
+  const getUser = await getUserById(id);
+  res.send(getUser);
 });
 
-app.listen(8081, () => {
-  console.log("Loading");
+app.post("/create-user", async (req, res) => {
+  const { email, password, username } = req.body;
+  const newRegistration = await createUser(email, password, username);
+  res.status(201).send(newRegistration);
+});
+
+app.post("/create-post",async(req, res)=>{
+  const {}= req.body;
+  //!we can not remmenber for long parameter
+  const createdPost = await writePost();
+  res.status(201).send(createdPost);
+});
+
+app.use((err, req, res, next) => {
+  console.err(err.stack);
+  res.status(500).send("Something broke!");
+});
+
+app.listen(8080, () => {
+  console.log("Server is running on 8080");
 });

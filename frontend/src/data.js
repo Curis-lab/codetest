@@ -33,23 +33,23 @@ export const postsData = [
   
   export const categoriesData = [
     {
-      id: "1",
+      id: 1,
       name: "Technology",
     },
     {
-      id: "2",
+      id: 2,
       name: "Tips & Ticks",
     },
     {
-      id: "3",
+      id: 3,
       name: "AI",
     },
     {
-      id: "4",
+      id: 4,
       name: "web dev",
     },
     {
-      id: "5",
+      id: 5,
       name: "programming",
     },
   ];

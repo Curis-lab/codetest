@@ -1,10 +1,20 @@
 import { categoriesData } from "../data";
 import { useState } from "react";
-import { BrowserRouter as Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 export default function CreatePostForm() {
   const [links, setLinks] = useState([]);
   const [inputLinks, setInputLinks] = useState("");
+
+  const [title, setTitle] = useState("");
+  const [imgLink, setImgLink] = useState("");
+  const [content, setContent] = useState("");
+  const [ctg, setCtg] = useState(0);
+
+  const navigate = useNavigate();
+
   const addLink = (e) => {
     e.preventDefault();
     if (inputLinks.trim() !== "") {
@@ -16,13 +26,44 @@ export default function CreatePostForm() {
   const deleteLink = (index) => {
     setLinks((prev) => prev.filter((_, i) => i !== index));
   };
-  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    axios.post('http://localhost:8080/create-post',
+    {
+      "user_id":1,
+      "title":title,
+      "imageURL":imgLink,
+      "content":content,
+      "referencesURL":links.join(', '),
+      "category_id":ctg
+    }
+    ).then(result=>{
+      navigate('/');
+    })
+    .catch(err=>console.log(err));
+  };
   return (
     <div>
       <h2>Create Post</h2>
-      <form className="flex flex-col gap-2">
-        <input type="text" />
-        <textarea placeholder="Content" />
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="link for image"
+          value={imgLink}
+          onChange={(e) => setImgLink(e.target.value)}
+        />
+        <textarea
+          placeholder="Content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
         {links &&
           links.map((link, i) => (
             <div key={i} className="flex gap-2 items-center">
@@ -91,11 +132,15 @@ export default function CreatePostForm() {
             Add
           </button>
         </div>
-        <select className="p-3 rounded-md border appearance-none">
-          <option value="">Select a categories</option>
+        <select
+          value={ctg}
+          onChange={(e) => setCtg(e.target.value)}
+          className="p-3 rounded-md border appearance-none"
+        >
+          <option value={0}>Select a categories</option>
           {categoriesData &&
             categoriesData.map((cateory) => (
-              <option key={cateory.id} value={cateory.name}>
+              <option key={cateory.id} value={cateory.id}>
                 {cateory.name}
               </option>
             ))}

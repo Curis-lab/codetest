@@ -1,13 +1,28 @@
 CREATE DATABASE Pando;
 USE Pando;
 
-CREATE TABLE post(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(225) NOT NULL,
-    contents TEXT NOT NULL,
-    created TIMESTAMP NOT NULL DEFAULT NOW()
-)
-INSERT INTO post(title, contents)
-VALUES
-('My First Node','A note about something');
-('My Second Note','Second note')
+CREATE TABLE User (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    username VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Category (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Post (
+    post_id INT PRIMARY KEY AUTO_INCREMENT,
+    post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT,
+    title VARCHAR(225),
+    imageURL VARCHAR(255),
+    content TEXT,
+    referencesURL VARCHAR(1000),
+    category_id INT,
+    FOREIGN KEY (user_id) REFERENCES User (user_id),
+    FOREIGN KEY (category_id) REFERENCES Category(category_id)
+);
