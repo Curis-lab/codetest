@@ -12,11 +12,6 @@ const pool = mysql
   })
   .promise();
 
-export async function getUser() {
-  const [rows] = await pool.query("SELECT * FROM User");
-  return rows;
-}
-
 export async function getUserById(id) {
   const [rows] = await pool.query(`SELECT * FROM User WHERE id = ?`, [id]);
   return rows;
@@ -57,4 +52,13 @@ export async function writePost(
     [user_id, title, imageURL, content, referencesURL, category_id]
   );
   return getPostByID(result.insertId);
+}
+
+export async function getAllPost() {
+  const [rows] = await pool.query("SELECT * FROM Post");
+  return rows;
+}
+
+export async function deletePostById(id) {
+  await pool.query(`DELETE FROM Post WHERE post_id==?`,[id]);
 }

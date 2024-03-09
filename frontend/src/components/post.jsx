@@ -1,25 +1,24 @@
 
 import { Link } from 'react-router-dom';
-import DeleteButton from "./delete-button";
-
+// import DeleteButton from "./delete-button";
+import defaultImage from '../assets/default.jpg';
 export default function Post({
   id,
   author,
   date,
   thumbnail,
-  authorEmail,
   title,
   content,
   links,
   category,
 }) {
-  const isEditable = true;
+  // const isEditable = true;
   return (
     <div className="my-5 border-b border-blue-300 py-8">
       <div className="my-4">
         Posted by:<span className="font-bold">{author}</span> on {date}
       </div>
-      <div className="relative w-full h-72">
+      <div className="relative w-full h-72 overflow-hidden">
         {thumbnail ? (
           <img
             src={thumbnail}
@@ -28,7 +27,7 @@ export default function Post({
           />
         ) : (
           <img
-            src={"/default.jpg"}
+            src={defaultImage}
             alt="Default"
             fill
             className="object-cover rounded-md object-center"
@@ -70,12 +69,12 @@ export default function Post({
           ))}
         </div>
       )}
-      {isEditable && (
+      {/* {isEditable && (
         <div className="flex gap-3 font-bold py-2 px-4 w-fit rounded-md bg-slate-200">
           <Link href={`/edit-post/${id}`}>Edit</Link>
-          <DeleteButton />
+          <DeleteButton postId={id} />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

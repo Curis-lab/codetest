@@ -6,21 +6,21 @@ import cookieParser from "cookie-parser";
 import bcrypt from "bcrypt";
 
 import {
-  getUser,
   getUserById,
   createUser,
   writePost,
   checkEmailForLogin,
+  getAllPost,
+  deletePostById,
 } from "./database.js";
 const salt = 10;
 const app = express();
 
 app.use(express.json());
-app.use(
-  cors()
-);
+app.use(cors());
 app.use(cookieParser());
 
+/* Start User */
 app.get("/user", async (req, res) => {
   const users = await getUser();
   res.send(users);
@@ -31,7 +31,35 @@ app.get("/user/:id", async (req, res) => {
   const getUser = await getUserById(id);
   res.send(getUser);
 });
+/*End of User*/
 
+/*Start Post*/
+app.get("/posts/:id",async(req, res)=>{
+  const id = req.params.id;
+  await deletePostById(id);
+})
+app.get("/all-post", async(req, res) => {
+  const posts = await getAllPost();
+  res.send(posts);
+});
+
+app.post("/create-post", async (req, res) => {
+  const { user_id, title, imageURL, content, referencesURL, category_id } =
+    req.body;
+  //!we can not remmenber for long parameter so REFACTOR IT
+  const createdPost = await writePost(
+    user_id,
+    title,
+    imageURL,
+    content,
+    referencesURL,
+    category_id
+  );
+  res.status(201).send(createdPost);
+});
+/*End of Post*/
+
+//Auth
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const result = await checkEmailForLogin(email);
@@ -58,21 +86,8 @@ app.post("/registration", (req, res) => {
     }
   });
 });
+/* End of Auth */
 
-app.post("/create-post", async (req, res) => {
-  const { user_id, title, imageURL, content, referencesURL, category_id } =
-    req.body;
-  //!we can not remmenber for long parameter so REFACTOR IT
-  const createdPost = await writePost(
-    user_id,
-    title,
-    imageURL,
-    content,
-    referencesURL,
-    category_id
-  );
-  res.status(201).send(createdPost);
-});
 
 app.use((err, req, res, next) => {
   console.err(err.stack);
