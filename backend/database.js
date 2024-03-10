@@ -43,9 +43,10 @@ export async function getPostByID(id) {
   const [rows] = await pool.query(`SELECT * FROM Post WHERE post_id = ?`, [id]);
   return rows;
 }
-export async function updatePost(title, content, postId){
-  const [rows] = await pool.query('UPDATE posts SET title = ?, content = ? WHERE id = ?',
-  [title, content, postId]);
+export async function updatePost(title, content, imageURL, links, category_id, postId){
+  const referencesURL = links;
+  const [rows] = await pool.query('UPDATE posts SET title = ?, content = ? ,imageURL = ?, referencesURL=?, category_id=?  WHERE id = ?',
+  [title, content,imageURL, referencesURL, category_id, postId]);
   return rows;
 }
 export async function writePost(

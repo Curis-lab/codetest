@@ -77,7 +77,8 @@ app.get("/postbyid/:id",async(req,res)=>{
 app.put('/post/:id',async(req, res)=>{
   const postId = req.params.id;
   const {title, imageURL, content, category_id, links} = req.body;
-  await updatePost(title, content, postId);
+  await updatePost(title, imageURL, content, category_id, links, postId);
+  res.json({status:'success'})
 })
 app.get(`/delete-post/:id`, async (req, res) => {
   const id = req.params.id;

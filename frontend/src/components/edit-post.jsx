@@ -33,14 +33,14 @@ export default function EditPost() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const linkToString = links.join(',');
-    // axios.put(`http://localhost:8080/post/${post_id}`,{
-    //   title,
-    //   imgLink,
-    //   content,
-    //   category_id:ctg,
-    //   linkToString
-    // }).then(res=>console.log(res))
-    // .catch(err=>console.log('err'));
+    axios.put(`http://localhost:8080/post/${post_id}`,{
+      title,
+      imgLink,
+      content,
+      category_id:ctg,
+      linkToString
+    }).then(res=>{navigate('/')})
+    .catch(err=>console.log('err'));
   };
 
   useEffect(()=>{

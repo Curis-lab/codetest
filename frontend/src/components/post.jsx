@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import DeleteButton from "./delete-button";
 import defaultImage from "../assets/default.jpg";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 
 export default function Post({
   id,
@@ -12,7 +14,20 @@ export default function Post({
   links,
   category,
 }) {
-  const isEditable = true;
+  const [isEditable, setIsEditable] = useState(false);
+  axios.defaults.withCredentials = true;
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/")
+      .then((res) => {
+        if (res.data.status === "success") {
+          setIsEditable(true);
+        } else {
+          setIsEditable(false);
+        }
+      })
+      .catch((err) => console.log("Error in setAth"));
+  }, []);
   return (
     <div className="my-5 border-b border-blue-300 py-8">
       <div className="my-4">
