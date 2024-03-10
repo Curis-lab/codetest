@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import bcrypt from "bcrypt";
 
 import {
+  getUser,
   getUserById,
   createUser,
   writePost,
@@ -34,11 +35,11 @@ app.get("/user/:id", async (req, res) => {
 /*End of User*/
 
 /*Start Post*/
-app.get("/posts/:id",async(req, res)=>{
+app.get("/posts/:id", async (req, res) => {
   const id = req.params.id;
   await deletePostById(id);
-})
-app.get("/all-post", async(req, res) => {
+});
+app.get("/all-post", async (req, res) => {
   const posts = await getAllPost();
   res.send(posts);
 });
@@ -64,7 +65,7 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const result = await checkEmailForLogin(email);
 
-  bcrypt.compare(result.password, password, (err, respond) => {
+  bcrypt.compare(password,result[0].password, (err, respond) => {
     if (err) {
       res.send("Error: Invalid Login Error");
     } else if (respond) {
@@ -77,17 +78,16 @@ app.post("/login", async (req, res) => {
 
 app.post("/registration", (req, res) => {
   const { email, password, username } = req.body;
-  bcrypt.hash(password.toString(), salt, async (err, hash) => {
+  bcrypt.hash(password.toString(), salt, async (err, password) => {
     if (err) {
       res.status(500).send({ Error: "Error for hashing password" });
     } else {
-      const newRegistration = await createUser(email, hash, username);
+      const newRegistration = await createUser(email, password, username);
       res.status(201).send(newRegistration);
     }
   });
 });
 /* End of Auth */
-
 
 app.use((err, req, res, next) => {
   console.err(err.stack);

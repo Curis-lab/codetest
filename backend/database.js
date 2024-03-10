@@ -12,8 +12,13 @@ const pool = mysql
   })
   .promise();
 
+export async function getUser(){
+  const [rows] = await pool.query(`SELECT * FROM User`);
+  return rows;
+}
+
 export async function getUserById(id) {
-  const [rows] = await pool.query(`SELECT * FROM User WHERE id = ?`, [id]);
+  const [rows] = await pool.query(`SELECT * FROM User WHERE user_id = ?`, [id]);
   return rows;
 }
 
