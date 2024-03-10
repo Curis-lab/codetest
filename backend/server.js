@@ -26,6 +26,29 @@ app.use(
   })
 );
 app.use(cookieParser());
+
+const verifyUser = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    res.send("Cookies is not exist");
+  } else {
+    jwt.verify(token, "jwt-token-key", (err, decoded) => {
+      if (err) {
+        res.send("Error in Cookies");
+      } else {
+        req.name = decoded.name;
+        next();
+      }
+    });
+  }
+};
+app.get("/", verifyUser, (req, res) => {
+  return res.json({ status: "success" });
+});
+app.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  return res.json({status:'success'})
+});
 /* Start User */
 app.get("/user", async (req, res) => {
   const users = await getUser();
@@ -63,7 +86,7 @@ app.post("/create-post", async (req, res) => {
     referencesURL,
     category_id
   );
-  res.status(201).send(name);
+  res.status(201).send(createdPost);
 });
 /*End of Post*/
 
@@ -98,6 +121,11 @@ app.post("/registration", (req, res) => {
       res.status(500).send({ Error: "Error for hashing password" });
     } else {
       const newRegistration = await createUser(email, password, username);
+      const user = { name: username };
+      const accessToken = jwt.sign(user, "jwt-token-key", {
+        expiresIn: "1d",
+      });
+      res.cookie("token", accessToken);
       res.status(201).send(newRegistration);
     }
   });
