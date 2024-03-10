@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
 
-  //implement login
-  
   const [isLogin, setIsLogin] = useState(true);
   const default_reg = { email: "", password: "", username: "" };
   const default_login = { email: "", password: "" };
@@ -14,14 +12,19 @@ export default function Login() {
   );
 
   const navigate = useNavigate();
+  axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLogin) {
       axios
         .post("http://localhost:8080/login", formdata)
         .then((res) => {
-          navigate("/");
-          setFormData(default_login);
+          if(res.data.logged){
+            navigate("/");
+            setFormData(default_login);
+          }else{
+            //return some error showing message
+          }
         })
         .catch((err) => console.log(err));
     } else {
