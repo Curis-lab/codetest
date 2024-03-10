@@ -1,7 +1,7 @@
+import { Link } from "react-router-dom";
+import DeleteButton from "./delete-button";
+import defaultImage from "../assets/default.jpg";
 
-import { Link } from 'react-router-dom';
-// import DeleteButton from "./delete-button";
-import defaultImage from '../assets/default.jpg';
 export default function Post({
   id,
   author,
@@ -12,7 +12,7 @@ export default function Post({
   links,
   category,
 }) {
-  // const isEditable = true;
+  const isEditable = true;
   return (
     <div className="my-5 border-b border-blue-300 py-8">
       <div className="my-4">
@@ -69,12 +69,12 @@ export default function Post({
           ))}
         </div>
       )}
-      {/* {isEditable && (
+      {isEditable && (
         <div className="flex gap-3 font-bold py-2 px-4 w-fit rounded-md bg-slate-200">
-          <Link href={`/edit-post/${id}`}>Edit</Link>
+          <Link to={`edit-post/${id}`}>Edit</Link>
           <DeleteButton postId={id} />
         </div>
-      )} */}
+      )}
     </div>
   );
 }

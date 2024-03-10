@@ -1,10 +1,13 @@
 import { categoriesData } from "../data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
-export default function CreatePostForm() {
+export default function EditPost() {
+
+  const {post_id} = useParams();
+
   const [links, setLinks] = useState([]);
   const [inputLinks, setInputLinks] = useState("");
 
@@ -29,21 +32,30 @@ export default function CreatePostForm() {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    axios.post('http://localhost:8080/create-post',
-    {
-      "user_id":1,
-      "title":title,
-      "imageURL":imgLink,
-      "content":content,
-      "referencesURL":links.join(', '),
-      "category_id":ctg
-    }
-    ).then(result=>{
-      navigate('/');
-    })
-    .catch(err=>console.log(err));
+    const linkToString = links.join(',');
+    // axios.put(`http://localhost:8080/post/${post_id}`,{
+    //   title,
+    //   imgLink,
+    //   content,
+    //   category_id:ctg,
+    //   linkToString
+    // }).then(res=>console.log(res))
+    // .catch(err=>console.log('err'));
   };
+
+  useEffect(()=>{
+    axios.get(`http://localhost:8080/postbyid/${post_id}`)
+    .then(res=>{
+      const ref_links = res.data[0].referencesURL.split(',');
+      setTitle(res.data[0].title);
+      setContent(res.data[0].content);
+      setImgLink(res.data[0].imageURL);
+      // setCtg(res.data[0].category_id);
+      setLinks(ref_links);
+    })
+    .catch(err=>console.log('err'));
+  },[post_id]);
+
   return (
     <div>
       <h2>Create Post</h2>

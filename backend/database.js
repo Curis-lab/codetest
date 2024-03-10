@@ -39,11 +39,15 @@ export async function createUser(email, password, username) {
 }
 
 //Posting
-async function getPostByID(id) {
+export async function getPostByID(id) {
   const [rows] = await pool.query(`SELECT * FROM Post WHERE post_id = ?`, [id]);
   return rows;
 }
-
+export async function updatePost(title, content, postId){
+  const [rows] = await pool.query('UPDATE posts SET title = ?, content = ? WHERE id = ?',
+  [title, content, postId]);
+  return rows;
+}
 export async function writePost(
   user_id,
   title,
@@ -65,5 +69,6 @@ export async function getAllPost() {
 }
 
 export async function deletePostById(id) {
-  await pool.query(`DELETE FROM Post WHERE post_id==?`,[id]);
+  await pool.query(`DELETE FROM Post WHERE post_id = ?`,[id]);
+  return getAllPost();
 }

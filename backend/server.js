@@ -1,10 +1,3 @@
-//express5 contain async error handly
-import cors from "cors";
-import express from "express";
-import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
-import bcrypt from "bcrypt";
-
 import {
   getUser,
   getUserById,
@@ -13,7 +6,16 @@ import {
   checkEmailForLogin,
   getAllPost,
   deletePostById,
+  getPostByID,
+  updatePost
 } from "./database.js";
+//express5 contain async error handly
+import cors from "cors";
+import express from "express";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import bcrypt from "bcrypt";
+
 const salt = 10;
 const app = express();
 
@@ -25,6 +27,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(cookieParser());
 
 const verifyUser = (req, res, next) => {
@@ -42,20 +45,23 @@ const verifyUser = (req, res, next) => {
     });
   }
 };
+
 app.get("/", verifyUser, (req, res) => {
   return res.json({ status: "success" });
 });
+
 app.get("/logout", (req, res) => {
-  res.clearCookie("token");
-  return res.json({status:'success'})
+  res.clearCookie('token');
+  res.json({status:'success'});
 });
+
 /* Start User */
 app.get("/user", async (req, res) => {
   const users = await getUser();
   res.send(users);
 });
 
-app.get("/user/:id", async (req, res) => {
+app.get(`/user/:id`, async (req, res) => {
   const id = req.params.id;
   const getUser = await getUserById(id);
   res.send(getUser);
@@ -63,10 +69,22 @@ app.get("/user/:id", async (req, res) => {
 /*End of User*/
 
 /*Start Post*/
-app.get("/posts/:id", async (req, res) => {
+app.get("/postbyid/:id",async(req,res)=>{
+  const post_id = req.params.id;
+  const post = await getPostByID(post_id);
+  res.send(post);
+})
+app.put('/post/:id',async(req, res)=>{
+  const postId = req.params.id;
+  const {title, imageURL, content, category_id, links} = req.body;
+  await updatePost(title, content, postId);
+})
+app.get(`/delete-post/:id`, async (req, res) => {
   const id = req.params.id;
   await deletePostById(id);
+  res.json({status:true});
 });
+
 app.get("/all-post", async (req, res) => {
   const posts = await getAllPost();
   res.send(posts);
@@ -75,9 +93,7 @@ app.get("/all-post", async (req, res) => {
 app.post("/create-post", async (req, res) => {
   const { user_id, title, imageURL, content, referencesURL, category_id } =
     req.body;
-  //get name from authorization
-  const name = req.user.name;
-  //!we can not remmenber for long parameter so REFACTOR IT
+
   const createdPost = await writePost(
     user_id,
     title,
@@ -86,8 +102,10 @@ app.post("/create-post", async (req, res) => {
     referencesURL,
     category_id
   );
+
   res.status(201).send(createdPost);
 });
+
 /*End of Post*/
 
 //Auth
@@ -136,17 +154,6 @@ app.use((err, req, res, next) => {
   console.err(err.stack);
   res.status(500).send("Something broke!");
 });
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.status(401).send("auth fail");
-  jwt.verify(token, "accesstokensec", (err, user) => {
-    if (err) return res.status(403).send("access token error");
-    req.user = user;
-    next();
-  });
-}
 
 app.listen(8080, () => {
   console.log("Server is running on 8080");
