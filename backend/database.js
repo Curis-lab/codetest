@@ -1,42 +1,40 @@
-import mysql from "mysql2";
-import dotenv from "dotenv";
+import pool from "./config/mysql.config.js";
+import { USER_QUERY } from "./query/user.query.js";
 
-dotenv.config();
-
-const pool = mysql
-  .createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-  })
-  .promise();
 
 export async function getUser(){
-  const [rows] = await pool.query(`SELECT * FROM User`);
+  const [rows] = await pool.query(USER_QUERY.SELECT_USERS);
   return rows;
 }
 
 export async function getUserById(id) {
-  const [rows] = await pool.query(`SELECT * FROM User WHERE user_id = ?`, [id]);
+  const [rows] = await pool.query(USER_QUERY.SELECT_USER_BY_ID, [id]);
   return rows;
 }
 
 export async function checkEmailForLogin(email) {
-  const [rows] = await pool.query(`SELECT * FROM User WHERE email = ?`, [
+  const [rows] = await pool.query(SELECT_USER_BY_EMAIL, [
     email,
   ]);
   return rows;
 }
 
 export async function createUser(email, password, username) {
-  const result = await pool.query(
-    `INSERT INTO user (email, password, username) VALUES (?, ?, ?)`,
+  const result = await pool.query(USER_QUERY.INSERT_USER,
     [email, password, username]
   );
   const id = result.insertId;
   return getUserById(id);
 }
+
+// export async function createUser(email, password, username) {
+//   const result = await pool.query(
+//     `INSERT INTO user (email, password, username) VALUES (?, ?, ?)`,
+//     [email, password, username]
+//   );
+//   const id = result.insertId;
+//   return getUserById(id);
+// }
 
 //Posting
 export async function getPostByID(id) {
