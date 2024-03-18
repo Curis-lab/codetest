@@ -1,6 +1,6 @@
 export const postsData = [
   {
-    id: "1",
+    id: "4",
     title: "New Smartphone Modeling Released",
     content: "A new smartphone model with advancd features had been released.",
     author: "John Doe",
